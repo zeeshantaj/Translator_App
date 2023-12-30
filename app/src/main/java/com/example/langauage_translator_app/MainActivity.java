@@ -108,31 +108,31 @@ public class MainActivity extends AppCompatActivity {
                 languageCode = FirebaseTranslateLanguage.HI;
                 break;
             case "Arabic":
-                languageCode = FirebaseTranslateLanguage.HI;
+                languageCode = FirebaseTranslateLanguage.AR;
                 break;
             case "French":
-                languageCode = FirebaseTranslateLanguage.HI;
+                languageCode = FirebaseTranslateLanguage.FR;
                 break;
             case "Japanese":
-                languageCode = FirebaseTranslateLanguage.HI;
+                languageCode = FirebaseTranslateLanguage.JA;
                 break;
             case "Chines":
-                languageCode = FirebaseTranslateLanguage.HI;
+                languageCode = FirebaseTranslateLanguage.CY;
                 break;
             case "Italian":
-                languageCode = FirebaseTranslateLanguage.HI;
+                languageCode = FirebaseTranslateLanguage.IT;
                 break;
             case "German":
-                languageCode = FirebaseTranslateLanguage.HI;
+                languageCode = FirebaseTranslateLanguage.GA;
                 break;
             case "Russian":
-                languageCode = FirebaseTranslateLanguage.HI;
+                languageCode = FirebaseTranslateLanguage.RU;
                 break;
-
-
+            default:
+                languageCode = 0;
 
         }
-
+        return languageCode;
 
     }
 
