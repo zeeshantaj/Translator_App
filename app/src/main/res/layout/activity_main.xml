@@ -12,15 +12,24 @@
 
 
 
-                <Spinner
-                    android:id="@+id/fromSpinner"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="15dp"
-                    android:paddingStart="20dp"
-                    android:background="@drawable/outline2"
-                    app:layout_constraintTop_toTopOf="parent" />
 
+    <LinearLayout
+        android:id="@+id/fromLay"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:background="@drawable/outline2"
+        android:orientation="vertical"
+        app:layout_constraintTop_toTopOf="parent" >
+        <Spinner
+            android:id="@+id/fromSpinner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            android:layout_gravity="center"
+            android:paddingStart="20dp"
+            app:layout_constraintTop_toTopOf="parent" />
+    </LinearLayout>
 
                 <ImageView
                     android:id="@+id/arrowBtn"
@@ -28,17 +37,27 @@
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="34dp"
                     android:src="@drawable/down_arrow"
-                    app:layout_constraintBottom_toBottomOf="@+id/toSpinner"
-                    app:layout_constraintEnd_toEndOf="@+id/fromSpinner"
-                    app:layout_constraintTop_toTopOf="@+id/fromSpinner" />
-                <Spinner
-                    android:id="@+id/toSpinner"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/outline"
-                    android:layout_marginTop="11dp"
-                    android:paddingStart="20dp"
-                    app:layout_constraintTop_toBottomOf="@id/fromSpinner" />
+                    app:layout_constraintBottom_toBottomOf="@+id/toLay"
+                    app:layout_constraintEnd_toEndOf="@+id/fromLay"
+                    app:layout_constraintTop_toTopOf="@+id/fromLay" />
+
+    <LinearLayout
+        android:id="@+id/toLay"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/outline"
+        android:orientation="vertical"
+        android:layout_marginTop="7dp"
+        app:layout_constraintTop_toBottomOf="@id/fromLay">
+
+        <Spinner
+            android:id="@+id/toSpinner"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="11dp"
+            android:paddingStart="20dp" />
+    </LinearLayout>
+
 
         <androidx.cardview.widget.CardView
             android:id="@+id/edCard"
@@ -48,7 +67,7 @@
             android:elevation="0dp"
             app:cardBackgroundColor="@color/black"
             app:cardCornerRadius="15dp"
-            app:layout_constraintTop_toBottomOf="@+id/toSpinner">
+            app:layout_constraintTop_toBottomOf="@+id/toLay">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"

@@ -1,16 +1,21 @@
 package com.example.langauage_translator_app;
 
+import static com.example.langauage_translator_app.Model.MyLanguage.getLanguageCode;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
+import android.animation.PropertyValuesHolder;
+import android.animation.ValueAnimator;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.speech.RecognizerIntent;
 import android.view.View;
 import android.view.animation.Animation;
@@ -25,6 +30,8 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.langauage_translator_app.Adapter.CustomSpinnerAdapter;
+import com.example.langauage_translator_app.Model.TranslationTask;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.FirebaseOptions;
@@ -49,6 +56,7 @@ public class MainActivity extends AppCompatActivity {
 
     private String[] fromLanguage = {"from", "English", "Urdu", "Hindi", "Arabic", "French", "Japanese", "Chines", "Italian", "German", "Russian"};
     private String[] toLanguage = {"to", "English", "Urdu", "Hindi", "Arabic", "French", "Japanese", "Chines", "Italian", "German", "Russian"};
+    private int[] flagResources = {R.drawable.us_flag,R.drawable.russia_flag};
 
     private static final int REQUEST_PERMISSION_CODE = 1;
     int languageCode, fromLanguageCode, toLanguageCode = 0;
@@ -59,6 +67,13 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         arrowBtn = findViewById(R.id.arrowBtn);
+       arrowBtn.setOnClickListener(new View.OnClickListener() {
+           @Override
+           public void onClick(View v) {
+               startAnimation();
+           }
+       });
+
         translatedTxt = findViewById(R.id.translatedTxt);
         editText = findViewById(R.id.editText);
         translateBtn = findViewById(R.id.translateBtn);
@@ -69,12 +84,6 @@ public class MainActivity extends AppCompatActivity {
         penBtn = findViewById(R.id.pencilBtn);
 
 
-        arrowBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startAnimation();
-            }
-        });
         translateBtn.setOnClickListener(v -> {
             translatedTxt.setVisibility(View.VISIBLE);
             translatedTxt.setText("");
@@ -88,10 +97,16 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(this, "Please Select language to translate", Toast.LENGTH_SHORT).show();
             }
             else {
-                translate(fromLanguageCode,toLanguageCode,editText.getText().toString());
+                TranslationTask translationTask = new TranslationTask(fromLanguageCode,toLanguageCode,editText.getText().toString(),translatedTxt,this);
+                translationTask.execute();
+                //translate(fromLanguageCode,toLanguageCode,editText.getText().toString());
             }
 
         });
+        CustomSpinnerAdapter toAdapter = new CustomSpinnerAdapter(this, R.layout.custom_spinner_dropdown_item, toLanguage, flagResources);
+        toAdapter.setDropDownViewResource(R.layout.custom_spinner_dropdown_item);
+        toSpinner.setAdapter(toAdapter);
+
         toSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -101,13 +116,26 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
-
+                // Handle onNothingSelected if needed
             }
         });
 
-        ArrayAdapter toAdapter = new ArrayAdapter(this, android.R.layout.simple_spinner_item,toLanguage);
-        toAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        toSpinner.setAdapter(toAdapter);
+        //        toSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+//            @Override
+//            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+//                toLanguageCode = getLanguageCode(toLanguage[position]);
+//                Toast.makeText(MainActivity.this, "to clicked", Toast.LENGTH_SHORT).show();
+//            }
+//
+//            @Override
+//            public void onNothingSelected(AdapterView<?> parent) {
+//
+//            }
+//        });
+//
+//        ArrayAdapter toAdapter = new ArrayAdapter(this, android.R.layout.simple_spinner_item,toLanguage);
+//        toAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+//        toSpinner.setAdapter(toAdapter);
         fromSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -141,37 +169,37 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private void translate(int fromLanguageCode,int toLanguageCode,String source) {
-        translatedTxt.setText("Downloading model, Please wait...");
-        FirebaseTranslatorOptions   options = new FirebaseTranslatorOptions.Builder()
-                .setSourceLanguage(fromLanguageCode)
-                .setTargetLanguage(toLanguageCode)
-                .build();
-        FirebaseTranslator translator = FirebaseNaturalLanguage.getInstance().getTranslator(options);
-        FirebaseModelDownloadConditions conditions = new FirebaseModelDownloadConditions.Builder().build();
-        translator.downloadModelIfNeeded(conditions).addOnSuccessListener(new OnSuccessListener<Void>() {
-            @Override
-            public void onSuccess(Void unused) {
-                translatedTxt.setText("Translation...");
-                translator.translate(source).addOnSuccessListener(new OnSuccessListener<String>() {
-                    @Override
-                    public void onSuccess(String s) {
-                        translatedTxt.setText(s);
-                    }
-                }).addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Toast.makeText(MainActivity.this, "Failed to translate! try again"+e.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
-                    }
-                });
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Toast.makeText(MainActivity.this, "Failed to download model! Please Check your internet connection!"+e.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
+//    private void translate(int fromLanguageCode,int toLanguageCode,String source) {
+//        translatedTxt.setText("Downloading model, Please wait...");
+//        FirebaseTranslatorOptions   options = new FirebaseTranslatorOptions.Builder()
+//                .setSourceLanguage(fromLanguageCode)
+//                .setTargetLanguage(toLanguageCode)
+//                .build();
+//        FirebaseTranslator translator = FirebaseNaturalLanguage.getInstance().getTranslator(options);
+//        FirebaseModelDownloadConditions conditions = new FirebaseModelDownloadConditions.Builder().build();
+//        translator.downloadModelIfNeeded(conditions).addOnSuccessListener(new OnSuccessListener<Void>() {
+//            @Override
+//            public void onSuccess(Void unused) {
+//                translatedTxt.setText("Translation...");
+//                translator.translate(source).addOnSuccessListener(new OnSuccessListener<String>() {
+//                    @Override
+//                    public void onSuccess(String s) {
+//                        translatedTxt.setText(s);
+//                    }
+//                }).addOnFailureListener(new OnFailureListener() {
+//                    @Override
+//                    public void onFailure(@NonNull Exception e) {
+//                        Toast.makeText(MainActivity.this, "Failed to translate! try again"+e.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
+//                    }
+//                });
+//            }
+//        }).addOnFailureListener(new OnFailureListener() {
+//            @Override
+//            public void onFailure(@NonNull Exception e) {
+//                Toast.makeText(MainActivity.this, "Failed to download model! Please Check your internet connection!"+e.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
+//            }
+//        });
+//    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
@@ -182,55 +210,38 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    //"English","Urdu","Hindi","Arabic","French","Japanese","Chines","Italian","German","Russian"
-    private int getLanguageCode(String language) {
-        int languageCode = 0;
-        switch (language) {
-            case "English":
-                languageCode = FirebaseTranslateLanguage.EN;
-                break;
-            case "Urdu":
-                languageCode = FirebaseTranslateLanguage.UR;
-                break;
-            case "Hindi":
-                languageCode = FirebaseTranslateLanguage.HI;
-                break;
-            case "Arabic":
-                languageCode = FirebaseTranslateLanguage.AR;
-                break;
-            case "French":
-                languageCode = FirebaseTranslateLanguage.FR;
-                break;
-            case "Japanese":
-                languageCode = FirebaseTranslateLanguage.JA;
-                break;
-            case "Chines":
-                languageCode = FirebaseTranslateLanguage.CY;
-                break;
-            case "Italian":
-                languageCode = FirebaseTranslateLanguage.IT;
-                break;
-            case "German":
-                languageCode = FirebaseTranslateLanguage.GA;
-                break;
-            case "Russian":
-                languageCode = FirebaseTranslateLanguage.RU;
-                break;
-            default:
-                languageCode = 0;
-
-        }
-        return languageCode;
-
-    }
-
     private void startAnimation() {
 
-        ObjectAnimator animator = ObjectAnimator.ofFloat(arrowBtn, "rotation", 0f, 360f);
-        animator.setDuration(1000);
-        AnimatorSet animatorSet = new AnimatorSet();
-        animatorSet.playTogether(animator);
-        animatorSet.start();
+        final long duration = 1000; // Animation duration in milliseconds
+        final long startTime = System.currentTimeMillis();
+        final float startRotation = arrowBtn.getRotation();
+        final float endRotation = startRotation + 360f; // 360 degrees
+
+        // Define a custom animation handler
+        final Handler handler = new Handler();
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                long elapsed = System.currentTimeMillis() - startTime;
+                float interpolation = elapsed / (float) duration;
+                if (interpolation > 1f) {
+                    interpolation = 1f;
+                }
+
+                float rotation = startRotation + ((endRotation - startRotation) * interpolation);
+                arrowBtn.setRotation(rotation);
+
+                if (interpolation < 1f) {
+                    // Continue the animation until it reaches the end
+                    handler.postDelayed(this, 16); // Update approximately every 16ms for smoother animation (60 FPS)
+                }
+            }
+        });
+//        ObjectAnimator animator = ObjectAnimator.ofFloat(arrowBtn, "rotation", 0f, 360f);
+//        animator.setDuration(1000);
+//        AnimatorSet animatorSet = new AnimatorSet();
+//        animatorSet.playTogether(animator);
+//        animatorSet.start();
 
     }
 
