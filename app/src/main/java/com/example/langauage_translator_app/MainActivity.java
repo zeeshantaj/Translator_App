@@ -56,7 +56,8 @@ public class MainActivity extends AppCompatActivity {
 
     private String[] fromLanguage = {"from", "English", "Urdu", "Hindi", "Arabic", "French", "Japanese", "Chines", "Italian", "German", "Russian"};
     private String[] toLanguage = {"to", "English", "Urdu", "Hindi", "Arabic", "French", "Japanese", "Chines", "Italian", "German", "Russian"};
-    private int[] flagResources = {R.drawable.us_flag,R.drawable.russia_flag};
+    private int[] flagResources = {R.drawable.default_flag,R.drawable.us_flag,R.drawable.pk_flag,R.drawable.india_flag,R.drawable.uae_flag,R.drawable.france_flag,R.drawable.japan_flag
+                                    ,R.drawable.china_flag,R.drawable.italy_flag,R.drawable.german_flag,R.drawable.russian_flag};
 
     private static final int REQUEST_PERMISSION_CODE = 1;
     int languageCode, fromLanguageCode, toLanguageCode = 0;
