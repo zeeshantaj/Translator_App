@@ -76,6 +76,7 @@ public class MainActivity extends AppCompatActivity {
     private static final int CAMERA_CAPTURE_CODE = 99;
     int languageCode, fromLanguageCode, toLanguageCode = 0;
     private static final int CAMERA_PERMISSION_REQUEST_CODE = 1001;
+    private boolean isPenEnabled = false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -139,6 +140,11 @@ public class MainActivity extends AppCompatActivity {
             } else {
                 // Permission already granted, proceed to open the camera
                 openCamera();
+            }
+        });
+        penBtn.setOnClickListener(v -> {
+            if (isPenEnabled){
+
             }
         });
 

@@ -58,7 +58,6 @@
             />
     </LinearLayout>
 
-
         <androidx.cardview.widget.CardView
             android:id="@+id/edCard"
             android:layout_width="match_parent"
@@ -96,18 +95,36 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="@+id/textView" />
 
-                <EditText
-                    android:id="@+id/editText"
+                <RelativeLayout
+                    android:id="@+id/penEdRelative"
                     android:layout_width="match_parent"
                     android:layout_height="120dp"
-                    android:layout_margin="10dp"
-                    android:background="@android:color/transparent"
-                    android:gravity="top"
-                    android:hint="Enter Text"
-                    android:textColor="@color/white"
-                    android:textColorHint="@color/grey"
-                    app:layout_constraintTop_toBottomOf="@+id/textView"
-                    tools:layout_editor_absoluteX="10dp" />
+                    android:orientation="vertical"
+                    app:layout_constraintTop_toBottomOf="@+id/textView">
+
+                    <EditText
+                        android:id="@+id/editText"
+                        android:layout_width="match_parent"
+                        android:layout_height="120dp"
+                        android:layout_margin="10dp"
+                        android:background="@android:color/transparent"
+                        android:gravity="top"
+                        android:hint="Enter Text"
+                        android:visibility="visible"
+                        android:textColor="@color/white"
+                        android:textColorHint="@color/grey"
+                        />
+
+                    <com.example.langauage_translator_app.PenView.PenView
+                        android:id="@+id/drawingView"
+                        android:layout_width="match_parent"
+                        android:layout_height="120dp"
+                        android:background="@color/grey"
+                        android:visibility="gone"
+                        android:layout_margin="10dp"/>
+
+                </RelativeLayout>
+
 
 
                 <LinearLayout
@@ -119,7 +136,7 @@
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/editText">
+                    app:layout_constraintTop_toBottomOf="@id/penEdRelative">
 
                     <ImageView
                         android:id="@+id/cameraBtn"
