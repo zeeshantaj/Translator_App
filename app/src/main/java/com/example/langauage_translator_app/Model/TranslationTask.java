@@ -34,7 +34,7 @@ public class TranslationTask extends AsyncTask<Void,Void,String> {
     @Override
     protected void onPreExecute() {
         super.onPreExecute();
-        translatedTxt.setText("Downloading model, Please wait...");
+        translatedTxt.setText("Downloading the model. Please Wait...");
     }
 
     @Override
@@ -84,6 +84,6 @@ public class TranslationTask extends AsyncTask<Void,Void,String> {
     @Override
     protected void onPostExecute(String result) {
         super.onPostExecute(result);
-        // This method can be used to handle any post-execution actions if needed
+        translatedTxt.setText("Translating...");
     }
 }

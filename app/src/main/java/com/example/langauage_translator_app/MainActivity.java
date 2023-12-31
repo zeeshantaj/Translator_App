@@ -5,18 +5,25 @@ import static com.example.langauage_translator_app.Model.MyLanguage.getLanguageC
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
+import android.Manifest;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.animation.PropertyValuesHolder;
 import android.animation.ValueAnimator;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
+import android.provider.MediaStore;
 import android.speech.RecognizerIntent;
+import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -34,12 +41,18 @@ import com.example.langauage_translator_app.Adapter.CustomSpinnerAdapter;
 import com.example.langauage_translator_app.Model.TranslationTask;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.vision.text.TextRecognizer;
 import com.google.firebase.FirebaseOptions;
 import com.google.firebase.ml.common.modeldownload.FirebaseModelDownloadConditions;
 import com.google.firebase.ml.naturallanguage.FirebaseNaturalLanguage;
 import com.google.firebase.ml.naturallanguage.translate.FirebaseTranslateLanguage;
 import com.google.firebase.ml.naturallanguage.translate.FirebaseTranslator;
 import com.google.firebase.ml.naturallanguage.translate.FirebaseTranslatorOptions;
+import com.google.firebase.ml.vision.FirebaseVision;
+import com.google.firebase.ml.vision.common.FirebaseVisionImage;
+import com.google.firebase.ml.vision.text.FirebaseVisionText;
+import com.google.firebase.ml.vision.text.FirebaseVisionTextRecognizer;
+import com.google.mlkit.vision.text.TextRecognition;
 
 import java.util.ArrayList;
 import java.util.Locale;
@@ -60,8 +73,9 @@ public class MainActivity extends AppCompatActivity {
                                     ,R.drawable.china_flag,R.drawable.italy_flag,R.drawable.german_flag,R.drawable.russian_flag};
 
     private static final int REQUEST_PERMISSION_CODE = 1;
+    private static final int CAMERA_CAPTURE_CODE = 99;
     int languageCode, fromLanguageCode, toLanguageCode = 0;
-
+    private static final int CAMERA_PERMISSION_REQUEST_CODE = 1001;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -104,55 +118,6 @@ public class MainActivity extends AppCompatActivity {
             }
 
         });
-        CustomSpinnerAdapter toAdapter = new CustomSpinnerAdapter(this, R.layout.custom_spinner_dropdown_item, toLanguage, flagResources);
-        toAdapter.setDropDownViewResource(R.layout.custom_spinner_dropdown_item);
-        toSpinner.setAdapter(toAdapter);
-
-        toSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                toLanguageCode = getLanguageCode(toLanguage[position]);
-                Toast.makeText(MainActivity.this, "to clicked", Toast.LENGTH_SHORT).show();
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-                // Handle onNothingSelected if needed
-            }
-        });
-
-        //        toSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-//            @Override
-//            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-//                toLanguageCode = getLanguageCode(toLanguage[position]);
-//                Toast.makeText(MainActivity.this, "to clicked", Toast.LENGTH_SHORT).show();
-//            }
-//
-//            @Override
-//            public void onNothingSelected(AdapterView<?> parent) {
-//
-//            }
-//        });
-//
-//        ArrayAdapter toAdapter = new ArrayAdapter(this, android.R.layout.simple_spinner_item,toLanguage);
-//        toAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-//        toSpinner.setAdapter(toAdapter);
-        fromSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                fromLanguageCode = getLanguageCode(fromLanguage[position]);
-                Toast.makeText(MainActivity.this, "from clicked", Toast.LENGTH_SHORT).show();
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
-        });
-
-        ArrayAdapter fromAdapter = new ArrayAdapter(this,android.R.layout.simple_spinner_item,fromLanguage);
-        fromAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        fromSpinner.setAdapter(fromAdapter);
 
         micBtn.setOnClickListener(v -> {
             Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
@@ -167,50 +132,118 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(this, ""+e.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
             }
         });
+        cameraBtn.setOnClickListener(v -> {
+            if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+                // Request the camera permission
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, CAMERA_PERMISSION_REQUEST_CODE);
+            } else {
+                // Permission already granted, proceed to open the camera
+                openCamera();
+            }
+        });
 
+        setSpinner();
     }
 
-//    private void translate(int fromLanguageCode,int toLanguageCode,String source) {
-//        translatedTxt.setText("Downloading model, Please wait...");
-//        FirebaseTranslatorOptions   options = new FirebaseTranslatorOptions.Builder()
-//                .setSourceLanguage(fromLanguageCode)
-//                .setTargetLanguage(toLanguageCode)
-//                .build();
-//        FirebaseTranslator translator = FirebaseNaturalLanguage.getInstance().getTranslator(options);
-//        FirebaseModelDownloadConditions conditions = new FirebaseModelDownloadConditions.Builder().build();
-//        translator.downloadModelIfNeeded(conditions).addOnSuccessListener(new OnSuccessListener<Void>() {
-//            @Override
-//            public void onSuccess(Void unused) {
-//                translatedTxt.setText("Translation...");
-//                translator.translate(source).addOnSuccessListener(new OnSuccessListener<String>() {
-//                    @Override
-//                    public void onSuccess(String s) {
-//                        translatedTxt.setText(s);
-//                    }
-//                }).addOnFailureListener(new OnFailureListener() {
-//                    @Override
-//                    public void onFailure(@NonNull Exception e) {
-//                        Toast.makeText(MainActivity.this, "Failed to translate! try again"+e.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
-//                    }
-//                });
-//            }
-//        }).addOnFailureListener(new OnFailureListener() {
-//            @Override
-//            public void onFailure(@NonNull Exception e) {
-//                Toast.makeText(MainActivity.this, "Failed to download model! Please Check your internet connection!"+e.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
-//            }
-//        });
-//    }
+    private void setSpinner(){
+        CustomSpinnerAdapter toAdapter = new CustomSpinnerAdapter(this, R.layout.custom_spinner_dropdown_item, toLanguage, flagResources);
+        toAdapter.setDropDownViewResource(R.layout.custom_spinner_dropdown_item);
+        toSpinner.setAdapter(toAdapter);
+        CustomSpinnerAdapter fromAdapter = new CustomSpinnerAdapter(this, R.layout.custom_spinner_dropdown_item, fromLanguage, flagResources);
+        fromAdapter.setDropDownViewResource(R.layout.custom_spinner_dropdown_item);
+        fromSpinner.setAdapter(fromAdapter);
 
+
+        fromSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                fromLanguageCode = getLanguageCode(fromLanguage[position]);
+
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                // Handle onNothingSelected if needed
+            }
+        });
+        toSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                toLanguageCode = getLanguageCode(toLanguage[position]);
+
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                // Handle onNothingSelected if needed
+            }
+        });
+
+    }
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == REQUEST_PERMISSION_CODE){
-            ArrayList<String> result = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
-            editText.setText(result.get(0));
+        //mic data
+        if (requestCode == REQUEST_PERMISSION_CODE) {
+            if (!editText.getText().toString().isEmpty()) {
+                ArrayList<String> result = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
+                if (!result.isEmpty()) {
+                    editText.setText(result.get(0));
+                }
+            }
+            else {
+                Toast.makeText(this, "Mic Off", Toast.LENGTH_SHORT).show();
+            }
+        }
+
+        // camera data
+        if (requestCode == CAMERA_CAPTURE_CODE && resultCode == RESULT_OK && data != null){
+            Bundle extras = data.getExtras();
+            if (extras != null && extras.containsKey("data")){
+                Bitmap imageBitmap = (Bitmap) extras.get("data");
+
+                FirebaseVisionImage image = FirebaseVisionImage.fromBitmap(imageBitmap);
+                FirebaseVisionTextRecognizer textRecognizer = FirebaseVision.getInstance()
+                        .getCloudTextRecognizer();
+                textRecognizer.processImage(image).addOnSuccessListener(new OnSuccessListener<FirebaseVisionText>() {
+                    @Override
+                    public void onSuccess(FirebaseVisionText firebaseVisionText) {
+                        Toast.makeText(MainActivity.this, "Text"+firebaseVisionText.getText(), Toast.LENGTH_SHORT).show();
+                        editText.setText(firebaseVisionText.getText());
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Toast.makeText(MainActivity.this, "Failed to Extract"+e.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
+                        Log.e("MyApp","Failed->"+e.getLocalizedMessage());
+                    }
+                });
+            }
+        }
+
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == CAMERA_PERMISSION_REQUEST_CODE) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // Camera permission granted, proceed to open the camera
+                openCamera();
+            } else {
+                Toast.makeText(this, "Camera permission denied", Toast.LENGTH_SHORT).show();
+            }
         }
     }
 
+    private void openCamera() {
+        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
+            startActivityForResult(takePictureIntent, CAMERA_CAPTURE_CODE);
+        } else {
+            Toast.makeText(this, "Camera is not available", Toast.LENGTH_SHORT).show();
+        }
+    }
     private void startAnimation() {
 
         final long duration = 1000; // Animation duration in milliseconds
@@ -238,12 +271,6 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
-//        ObjectAnimator animator = ObjectAnimator.ofFloat(arrowBtn, "rotation", 0f, 360f);
-//        animator.setDuration(1000);
-//        AnimatorSet animatorSet = new AnimatorSet();
-//        animatorSet.playTogether(animator);
-//        animatorSet.start();
-
     }
 
 }
