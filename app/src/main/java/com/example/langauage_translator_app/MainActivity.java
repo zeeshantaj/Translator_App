@@ -25,6 +25,7 @@ import android.provider.MediaStore;
 import android.speech.RecognizerIntent;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.animation.RotateAnimation;
@@ -33,12 +34,14 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.langauage_translator_app.Adapter.CustomSpinnerAdapter;
 import com.example.langauage_translator_app.Model.TranslationTask;
+import com.example.langauage_translator_app.PenView.PenView;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.vision.text.TextRecognizer;
@@ -76,7 +79,9 @@ public class MainActivity extends AppCompatActivity {
     private static final int CAMERA_CAPTURE_CODE = 99;
     int languageCode, fromLanguageCode, toLanguageCode = 0;
     private static final int CAMERA_PERMISSION_REQUEST_CODE = 1001;
-    private boolean isPenEnabled = false;
+    private boolean isPenEnabled ;
+    private PenView penView;
+    private RelativeLayout container;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -98,6 +103,8 @@ public class MainActivity extends AppCompatActivity {
         cameraBtn = findViewById(R.id.cameraBtn);
         micBtn = findViewById(R.id.micBtn);
         penBtn = findViewById(R.id.pencilBtn);
+        container = findViewById(R.id.penEdRelative);
+        penView = findViewById(R.id.drawingView);
 
 
         translateBtn.setOnClickListener(v -> {
@@ -144,8 +151,16 @@ public class MainActivity extends AppCompatActivity {
         });
         penBtn.setOnClickListener(v -> {
             if (isPenEnabled){
+                Toast.makeText(this, "pen enabled you can draw"+isPenEnabled, Toast.LENGTH_SHORT).show();
+                editText.setVisibility(View.GONE);
+                penView.setVisibility(View.VISIBLE);
+            }
+            else {
+                editText.setVisibility(View.VISIBLE);
+                penView.setVisibility(View.GONE);
 
             }
+            isPenEnabled = !isPenEnabled;
         });
 
         setSpinner();
