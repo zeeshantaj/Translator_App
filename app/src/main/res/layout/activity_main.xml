@@ -4,71 +4,41 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/mainColor"
     tools:context=".MainActivity"
-    android:background="@color/white">
+    android:id="@+id/constraintLayout">
 
 
 
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/constraintLayout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@drawable/bottom_sheet_bg"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
+
+                <Spinner
+                    android:id="@+id/fromSpinner"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="15dp"
+                    android:paddingStart="20dp"
+                    android:background="@drawable/outline2"
+                    app:layout_constraintTop_toTopOf="parent" />
 
 
-        <Spinner
-            android:id="@+id/fromSpinner"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="15dp"
-            android:background="@drawable/outline2"
-            app:layout_constraintTop_toTopOf="parent" />
-
-
-<!--        <Button-->
-<!--            android:id="@+id/englishBtn"-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:layout_marginTop="15dp"-->
-<!--            android:background="@drawable/outline2"-->
-<!--            android:drawableLeft="@drawable/us_flag"-->
-<!--            android:text="English"-->
-<!--            android:textAlignment="textStart"-->
-<!--            android:textSize="24sp"-->
-<!--            app:layout_constraintTop_toTopOf="parent" />-->
-
-        <ImageView
-            android:id="@+id/arrowBtn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="34dp"
-            android:src="@drawable/down_arrow"
-            app:layout_constraintBottom_toBottomOf="@+id/toSpinner"
-            app:layout_constraintEnd_toEndOf="@+id/fromSpinner"
-            app:layout_constraintTop_toTopOf="@+id/fromSpinner" />
-        <Spinner
-            android:id="@+id/toSpinner"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@drawable/outline"
-            android:layout_marginTop="11dp"
-
-            app:layout_constraintTop_toBottomOf="@id/fromSpinner" />
-<!--        <Button-->
-<!--            android:id="@+id/russianBtn"-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:layout_marginTop="11dp"-->
-<!--            android:background="@drawable/outline"-->
-<!--            android:drawableLeft="@drawable/russia_flag"-->
-<!--            android:text="Russian"-->
-<!--            android:textAlignment="textStart"-->
-<!--            android:textSize="24sp"-->
-<!--            app:layout_constraintTop_toBottomOf="@+id/englishBtn" />-->
+                <ImageView
+                    android:id="@+id/arrowBtn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="34dp"
+                    android:src="@drawable/down_arrow"
+                    app:layout_constraintBottom_toBottomOf="@+id/toSpinner"
+                    app:layout_constraintEnd_toEndOf="@+id/fromSpinner"
+                    app:layout_constraintTop_toTopOf="@+id/fromSpinner" />
+                <Spinner
+                    android:id="@+id/toSpinner"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/outline"
+                    android:layout_marginTop="11dp"
+                    android:paddingStart="20dp"
+                    app:layout_constraintTop_toBottomOf="@id/fromSpinner" />
 
         <androidx.cardview.widget.CardView
             android:id="@+id/edCard"
@@ -121,15 +91,39 @@
                     tools:layout_editor_absoluteX="10dp" />
 
 
-                <ImageView
-                    android:layout_width="300dp"
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:src="@drawable/bottom_frame"
                     android:layout_marginBottom="7dp"
+                    android:orientation="horizontal"
+                    android:weightSum="3"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/editText" />
+                    app:layout_constraintTop_toBottomOf="@id/editText">
+
+                    <ImageView
+                        android:id="@+id/cameraBtn"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:src="@drawable/baseline_photo_camera_24" />
+
+                    <ImageView
+                        android:id="@+id/pencilBtn"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:src="@drawable/pencil_icon" />
+
+                    <ImageView
+                        android:id="@+id/micBtn"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:src="@drawable/baseline_mic_24" />
+
+                </LinearLayout>
 
 
             </androidx.constraintlayout.widget.ConstraintLayout>
@@ -141,172 +135,29 @@
             android:id="@+id/translatedTxt"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            app:layout_constraintTop_toBottomOf="@id/edCard"
-            android:textSize="24sp"
             android:padding="20dp"
-            app:layout_constraintStart_toStartOf="@id/edCard"
-            app:layout_constraintEnd_toEndOf="@id/edCard"
+            android:textColor="@color/white"
+            android:textSize="24sp"
             app:layout_constraintBottom_toTopOf="@id/translateBtn"
-            android:textColor="@color/white"/>
+            app:layout_constraintEnd_toEndOf="@id/edCard"
+            app:layout_constraintStart_toStartOf="@id/edCard"
+            app:layout_constraintTop_toBottomOf="@id/edCard" />
 
         <Button
             android:id="@+id/translateBtn"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="Translate"
-            android:textColor="@color/white"
-            android:textSize="20sp"
-            android:textAllCaps="false"
             android:layout_marginStart="20dp"
             android:layout_marginEnd="20dp"
+            android:text="Translate"
+            android:background="@drawable/btn_bg"
+            android:backgroundTint="@color/purpleShade"
+            android:textAllCaps="false"
+            android:textColor="@color/white"
+            android:textSize="20sp"
             app:layout_constraintEnd_toEndOf="@+id/translatedTxt"
             app:layout_constraintStart_toStartOf="@+id/translatedTxt"
             app:layout_constraintTop_toBottomOf="@id/translatedTxt" />
-
-
-
-<!--        <RelativeLayout-->
-<!--            android:id="@+id/designRelative"-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:layout_marginTop="6dp"-->
-<!--            app:layout_constraintTop_toBottomOf="@id/edCard">-->
-
-<!--            <TextView-->
-<!--                android:id="@+id/wordTxt"-->
-<!--                android:layout_width="wrap_content"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:layout_marginStart="20dp"-->
-<!--                android:layout_marginTop="10dp"-->
-<!--                android:text="Design"-->
-<!--                android:textColor="@color/white"-->
-<!--                android:textSize="20sp" />-->
-
-<!--            <TextView-->
-<!--                android:id="@+id/meaning"-->
-<!--                android:layout_width="wrap_content"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:layout_below="@+id/wordTxt"-->
-<!--                android:layout_alignStart="@id/wordTxt"-->
-<!--                android:text="blahblah"-->
-<!--                android:textColor="@color/grey" />-->
-
-
-<!--            <ImageView-->
-<!--                android:layout_width="24dp"-->
-<!--                android:layout_height="24dp"-->
-<!--                android:layout_alignParentEnd="true"-->
-<!--                android:layout_marginTop="20dp"-->
-<!--                android:layout_marginEnd="25dp"-->
-<!--                android:src="@drawable/star_filled" />-->
-
-
-<!--        </RelativeLayout>-->
-
-<!--        <View-->
-<!--            android:id="@+id/view1"-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="2dp"-->
-<!--            android:layout_marginStart="15dp"-->
-<!--            android:layout_marginTop="8dp"-->
-<!--            android:layout_marginEnd="15dp"-->
-<!--            android:background="@color/black"-->
-<!--            app:layout_constraintTop_toBottomOf="@id/designRelative" />-->
-
-
-<!--        <RelativeLayout-->
-<!--            android:id="@+id/relative2"-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            app:layout_constraintTop_toBottomOf="@id/view1">-->
-
-<!--            <TextView-->
-<!--                android:id="@+id/wordTxt2"-->
-<!--                android:layout_width="wrap_content"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:layout_marginStart="20dp"-->
-<!--                android:layout_marginTop="10dp"-->
-<!--                android:text="How Are you doing ?"-->
-<!--                android:textColor="@color/white"-->
-<!--                android:textSize="20sp" />-->
-
-<!--            <ImageView-->
-<!--                android:layout_width="24dp"-->
-<!--                android:layout_height="24dp"-->
-<!--                android:layout_alignParentEnd="true"-->
-<!--                android:layout_marginTop="20dp"-->
-<!--                android:layout_marginEnd="25dp"-->
-<!--                android:src="@drawable/star" />-->
-
-<!--            <TextView-->
-<!--                android:id="@+id/meaning2"-->
-<!--                android:layout_width="wrap_content"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:layout_below="@+id/wordTxt2"-->
-<!--                android:layout_alignStart="@id/wordTxt2"-->
-<!--                android:text="blahblah"-->
-<!--                android:textColor="@color/grey" />-->
-<!--        </RelativeLayout>-->
-
-<!--        <View-->
-<!--            android:id="@+id/view2"-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="2dp"-->
-<!--            android:layout_marginStart="15dp"-->
-<!--            android:layout_marginTop="8dp"-->
-<!--            android:layout_marginEnd="15dp"-->
-<!--            android:background="@color/black"-->
-<!--            app:layout_constraintTop_toBottomOf="@id/relative2" />-->
-
-<!--        <RelativeLayout-->
-<!--            android:id="@+id/relative3"-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            app:layout_constraintTop_toBottomOf="@id/view2">-->
-
-<!--            <TextView-->
-<!--                android:id="@+id/wordTxt1"-->
-<!--                android:layout_width="wrap_content"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:layout_marginStart="20dp"-->
-<!--                android:layout_marginTop="10dp"-->
-<!--                android:text="Have good day"-->
-<!--                android:textColor="@color/white"-->
-<!--                android:textSize="20sp" />-->
-
-<!--            <ImageView-->
-<!--                android:id="@+id/starImage"-->
-<!--                android:layout_width="24dp"-->
-<!--                android:layout_height="24dp"-->
-<!--                android:layout_alignParentEnd="true"-->
-<!--                android:layout_marginTop="20dp"-->
-<!--                android:layout_marginEnd="25dp"-->
-<!--                android:src="@drawable/star" />-->
-
-<!--            <TextView-->
-<!--                android:id="@+id/meaning1"-->
-<!--                android:layout_width="wrap_content"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:layout_below="@+id/wordTxt1"-->
-<!--                android:layout_alignStart="@id/wordTxt1"-->
-<!--                android:text="blahblah"-->
-<!--                android:textColor="@color/grey" />-->
-
-
-<!--        </RelativeLayout>-->
-
-<!--        <View-->
-<!--            android:id="@+id/view3"-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="2dp"-->
-<!--            android:layout_marginStart="15dp"-->
-<!--            android:layout_marginTop="8dp"-->
-<!--            android:layout_marginEnd="15dp"-->
-<!--            android:background="@color/black"-->
-<!--            app:layout_constraintTop_toBottomOf="@id/relative3" />-->
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
-
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
